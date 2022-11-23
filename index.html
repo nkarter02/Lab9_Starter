@@ -2,6 +2,13 @@
 <html lang="en">
 
 <head>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+  window.TrackJS && TrackJS.install({ 
+    token: "8f3e91e994a044828b2b78a0053aede7"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+  </script>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -88,6 +95,13 @@
   </main>
 
   <script>
+    class myError extends Error{
+      constructor(message){
+        super(message);
+        this.name = 'My Error';
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,7 +109,16 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try{
+        var evaluation = eval(`${firstNum} ${operator} ${secondNum}`)
+      }
+      catch (err) {
+        console.error("The inputs are invalid!");
+        output.innerHTML = "Make sure inputs are numbers.";
+      }
+      finally{
+        output.innerHTML = evaluation;
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
@@ -183,9 +206,8 @@
               curBtn[0].innerHTML = 'Changed Text';
               console.log('There were no errors!');
             }
-            catch (er) {
-              console.error('An error was found!');
-              console.error(er);
+            catch {
+              throw new myError("You clicked the error button!");
             }
             break;
         }
